@@ -106,7 +106,7 @@ namespace GSMLibrary.Services
             try
             {
                 string otp;
-                var endTime = DateTime.Now.AddMinutes(1);
+                var endTime = DateTime.Now.AddSeconds(2);
                 do
                 {
                     token.ThrowIfCancellationRequested();
@@ -115,9 +115,15 @@ namespace GSMLibrary.Services
                     if (string.IsNullOrEmpty(otp)) Thread.Sleep(1000);
                 } while (string.IsNullOrEmpty(otp) && endTime > DateTime.Now);
                 if (string.IsNullOrEmpty(otp)) throw new Exception();
+                com.LastOtp = otp;
                 return otp;
             }
-            catch { throw new Exception("Không tìm thấy OTP"); }
+            catch 
+            {
+                if (token.IsCancellationRequested) throw new Exception("Người dùng yêu cầu dừng chương trình");
+                if (com.LastOtp != null) return com.LastOtp;
+                throw new Exception("Không tìm thấy OTP"); 
+            }
         }
 
         public static string GetOTPUnreadMessage(GSMCom com)

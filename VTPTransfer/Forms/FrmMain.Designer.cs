@@ -38,7 +38,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TopPanel = new Krypton.Toolkit.KryptonPanel();
             this.kryptonTableLayoutPanel1 = new Krypton.Toolkit.KryptonTableLayoutPanel();
-            this.KeyCount = new Krypton.Toolkit.KryptonLabel();
             this.StartBtn = new Krypton.Toolkit.KryptonButton();
             this.DisconnectBtn = new Krypton.Toolkit.KryptonButton();
             this.ConnectBtn = new Krypton.Toolkit.KryptonButton();
@@ -54,6 +53,8 @@
             this.MaxNotEnoughCheckBox = new Krypton.Toolkit.KryptonCheckBox();
             this.ProxyInputBtn = new Krypton.Toolkit.KryptonButton();
             this.StopBtn = new Krypton.Toolkit.KryptonButton();
+            this.kryptonLabel4 = new Krypton.Toolkit.KryptonLabel();
+            this.PasswordTextBox = new Krypton.Toolkit.KryptonTextBox();
             this.BotPanel = new Krypton.Toolkit.KryptonPanel();
             this.GSMGridView = new Krypton.Toolkit.KryptonDataGridView();
             this.ComName = new Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
@@ -64,6 +65,7 @@
             this.AccountBalance = new Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
             this.PortStatus = new Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
             this.kryptonPanel1 = new Krypton.Toolkit.KryptonPanel();
+            this.TransferBtn = new Krypton.Toolkit.KryptonButton();
             ((System.ComponentModel.ISupportInitialize)(this.TopPanel)).BeginInit();
             this.TopPanel.SuspendLayout();
             this.kryptonTableLayoutPanel1.SuspendLayout();
@@ -81,39 +83,43 @@
             this.TopPanel.Location = new System.Drawing.Point(0, 0);
             this.TopPanel.Margin = new System.Windows.Forms.Padding(0);
             this.TopPanel.Name = "TopPanel";
-            this.TopPanel.Size = new System.Drawing.Size(1003, 56);
+            this.TopPanel.Size = new System.Drawing.Size(1132, 56);
             this.TopPanel.TabIndex = 0;
             // 
             // kryptonTableLayoutPanel1
             // 
             this.kryptonTableLayoutPanel1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("kryptonTableLayoutPanel1.BackgroundImage")));
             this.kryptonTableLayoutPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.kryptonTableLayoutPanel1.ColumnCount = 9;
+            this.kryptonTableLayoutPanel1.ColumnCount = 11;
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.kryptonTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.kryptonTableLayoutPanel1.Controls.Add(this.KeyCount, 3, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.StartBtn, 0, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.DisconnectBtn, 2, 1);
             this.kryptonTableLayoutPanel1.Controls.Add(this.ConnectBtn, 0, 1);
-            this.kryptonTableLayoutPanel1.Controls.Add(this.kryptonLabel1, 3, 1);
-            this.kryptonTableLayoutPanel1.Controls.Add(this.ThreadInput, 4, 1);
             this.kryptonTableLayoutPanel1.Controls.Add(this.ResetBtn, 1, 1);
             this.kryptonTableLayoutPanel1.Controls.Add(this.kryptonLabel2, 5, 1);
             this.kryptonTableLayoutPanel1.Controls.Add(this.kryptonLabel3, 5, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.AmountInput, 6, 1);
             this.kryptonTableLayoutPanel1.Controls.Add(this.ReceiverTextBox, 6, 0);
-            this.kryptonTableLayoutPanel1.Controls.Add(this.ProxyCountTextBox, 4, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.MaxCheckBox, 7, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.MaxNotEnoughCheckBox, 7, 1);
-            this.kryptonTableLayoutPanel1.Controls.Add(this.ProxyInputBtn, 1, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.kryptonLabel4, 8, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.PasswordTextBox, 9, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.TransferBtn, 1, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.ProxyInputBtn, 3, 0);
             this.kryptonTableLayoutPanel1.Controls.Add(this.StopBtn, 2, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.ProxyCountTextBox, 4, 0);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.kryptonLabel1, 3, 1);
+            this.kryptonTableLayoutPanel1.Controls.Add(this.ThreadInput, 4, 1);
             this.kryptonTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonTableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.kryptonTableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -121,22 +127,10 @@
             this.kryptonTableLayoutPanel1.RowCount = 2;
             this.kryptonTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.kryptonTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.kryptonTableLayoutPanel1.Size = new System.Drawing.Size(1003, 56);
+            this.kryptonTableLayoutPanel1.Size = new System.Drawing.Size(1132, 56);
             this.kryptonTableLayoutPanel1.StateCommon.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.kryptonTableLayoutPanel1.StateCommon.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.kryptonTableLayoutPanel1.TabIndex = 2;
-            // 
-            // KeyCount
-            // 
-            this.KeyCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.KeyCount.Location = new System.Drawing.Point(303, 3);
-            this.KeyCount.Name = "KeyCount";
-            this.KeyCount.Size = new System.Drawing.Size(94, 22);
-            this.KeyCount.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.KeyCount.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.KeyCount.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.KeyCount.TabIndex = 12;
-            this.KeyCount.Values.Text = "Số proxy:";
             // 
             // StartBtn
             // 
@@ -146,13 +140,13 @@
             this.StartBtn.Margin = new System.Windows.Forms.Padding(1);
             this.StartBtn.Name = "StartBtn";
             this.StartBtn.Size = new System.Drawing.Size(98, 26);
-            this.StartBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.StartBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.StartBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(60)))), ((int)(((byte)(0)))));
+            this.StartBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(60)))), ((int)(((byte)(0)))));
             this.StartBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.StartBtn.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.StartBtn.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.StartBtn.TabIndex = 0;
-            this.StartBtn.Values.Text = "Bắt đầu";
+            this.StartBtn.Values.Text = "Đăng nhập";
             this.StartBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.StartBtn_MouseUp);
             // 
             // DisconnectBtn
@@ -180,8 +174,8 @@
             this.ConnectBtn.Margin = new System.Windows.Forms.Padding(1);
             this.ConnectBtn.Name = "ConnectBtn";
             this.ConnectBtn.Size = new System.Drawing.Size(98, 26);
-            this.ConnectBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.ConnectBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.ConnectBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(60)))), ((int)(((byte)(0)))));
+            this.ConnectBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(60)))), ((int)(((byte)(0)))));
             this.ConnectBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ConnectBtn.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ConnectBtn.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -236,8 +230,8 @@
             this.ResetBtn.Margin = new System.Windows.Forms.Padding(1);
             this.ResetBtn.Name = "ResetBtn";
             this.ResetBtn.Size = new System.Drawing.Size(98, 26);
-            this.ResetBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ResetBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.ResetBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            this.ResetBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.ResetBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ResetBtn.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ResetBtn.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -284,7 +278,7 @@
             0,
             0});
             this.AmountInput.Name = "AmountInput";
-            this.AmountInput.Size = new System.Drawing.Size(194, 22);
+            this.AmountInput.Size = new System.Drawing.Size(144, 22);
             this.AmountInput.StateCommon.Back.Color1 = System.Drawing.Color.Green;
             this.AmountInput.StateCommon.Content.Color1 = System.Drawing.Color.White;
             this.AmountInput.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -302,7 +296,7 @@
             this.ReceiverTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ReceiverTextBox.Location = new System.Drawing.Point(603, 3);
             this.ReceiverTextBox.Name = "ReceiverTextBox";
-            this.ReceiverTextBox.Size = new System.Drawing.Size(194, 23);
+            this.ReceiverTextBox.Size = new System.Drawing.Size(144, 23);
             this.ReceiverTextBox.StateCommon.Back.Color1 = System.Drawing.Color.Green;
             this.ReceiverTextBox.StateCommon.Content.Color1 = System.Drawing.Color.White;
             this.ReceiverTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -327,9 +321,9 @@
             this.MaxCheckBox.Checked = true;
             this.MaxCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MaxCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MaxCheckBox.Location = new System.Drawing.Point(803, 3);
+            this.MaxCheckBox.Location = new System.Drawing.Point(753, 3);
             this.MaxCheckBox.Name = "MaxCheckBox";
-            this.MaxCheckBox.Size = new System.Drawing.Size(194, 22);
+            this.MaxCheckBox.Size = new System.Drawing.Size(144, 22);
             this.MaxCheckBox.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.MaxCheckBox.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.MaxCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -341,9 +335,9 @@
             this.MaxNotEnoughCheckBox.Checked = true;
             this.MaxNotEnoughCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MaxNotEnoughCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MaxNotEnoughCheckBox.Location = new System.Drawing.Point(803, 31);
+            this.MaxNotEnoughCheckBox.Location = new System.Drawing.Point(753, 31);
             this.MaxNotEnoughCheckBox.Name = "MaxNotEnoughCheckBox";
-            this.MaxNotEnoughCheckBox.Size = new System.Drawing.Size(194, 22);
+            this.MaxNotEnoughCheckBox.Size = new System.Drawing.Size(144, 22);
             this.MaxNotEnoughCheckBox.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.MaxNotEnoughCheckBox.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.MaxNotEnoughCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -354,7 +348,7 @@
             // 
             this.ProxyInputBtn.CornerRoundingRadius = -1F;
             this.ProxyInputBtn.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ProxyInputBtn.Location = new System.Drawing.Point(101, 1);
+            this.ProxyInputBtn.Location = new System.Drawing.Point(301, 1);
             this.ProxyInputBtn.Margin = new System.Windows.Forms.Padding(1);
             this.ProxyInputBtn.Name = "ProxyInputBtn";
             this.ProxyInputBtn.Size = new System.Drawing.Size(98, 26);
@@ -385,6 +379,29 @@
             this.StopBtn.Values.Text = "Dừng lại";
             this.StopBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.StopBtn_MouseUp);
             // 
+            // kryptonLabel4
+            // 
+            this.kryptonLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.kryptonLabel4.Location = new System.Drawing.Point(903, 3);
+            this.kryptonLabel4.Name = "kryptonLabel4";
+            this.kryptonLabel4.Size = new System.Drawing.Size(74, 22);
+            this.kryptonLabel4.StateCommon.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.kryptonLabel4.StateCommon.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.kryptonLabel4.StateCommon.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.kryptonLabel4.TabIndex = 21;
+            this.kryptonLabel4.Values.Text = "Mật khẩu:";
+            // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PasswordTextBox.Location = new System.Drawing.Point(983, 3);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(144, 23);
+            this.PasswordTextBox.StateCommon.Back.Color1 = System.Drawing.Color.Green;
+            this.PasswordTextBox.StateCommon.Content.Color1 = System.Drawing.Color.White;
+            this.PasswordTextBox.StateCommon.Content.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.PasswordTextBox.TabIndex = 22;
+            // 
             // BotPanel
             // 
             this.BotPanel.Controls.Add(this.GSMGridView);
@@ -392,7 +409,7 @@
             this.BotPanel.Location = new System.Drawing.Point(0, 56);
             this.BotPanel.Margin = new System.Windows.Forms.Padding(0);
             this.BotPanel.Name = "BotPanel";
-            this.BotPanel.Size = new System.Drawing.Size(1003, 565);
+            this.BotPanel.Size = new System.Drawing.Size(1132, 565);
             this.BotPanel.TabIndex = 1;
             // 
             // GSMGridView
@@ -417,7 +434,7 @@
             this.GSMGridView.RowHeadersVisible = false;
             this.GSMGridView.RowTemplate.Height = 25;
             this.GSMGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.GSMGridView.Size = new System.Drawing.Size(1003, 565);
+            this.GSMGridView.Size = new System.Drawing.Size(1132, 565);
             this.GSMGridView.StateCommon.Background.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
             this.GSMGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
             this.GSMGridView.StateCommon.HeaderColumn.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(30)))));
@@ -500,7 +517,7 @@
             this.PortStatus.HeaderText = "Trạng thái";
             this.PortStatus.Name = "PortStatus";
             this.PortStatus.ReadOnly = true;
-            this.PortStatus.Width = 372;
+            this.PortStatus.Width = 501;
             // 
             // kryptonPanel1
             // 
@@ -509,15 +526,32 @@
             this.kryptonPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.kryptonPanel1.Location = new System.Drawing.Point(0, 0);
             this.kryptonPanel1.Name = "kryptonPanel1";
-            this.kryptonPanel1.Size = new System.Drawing.Size(1003, 621);
+            this.kryptonPanel1.Size = new System.Drawing.Size(1132, 621);
             this.kryptonPanel1.TabIndex = 3;
+            // 
+            // TransferBtn
+            // 
+            this.TransferBtn.CornerRoundingRadius = -1F;
+            this.TransferBtn.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransferBtn.Location = new System.Drawing.Point(101, 1);
+            this.TransferBtn.Margin = new System.Windows.Forms.Padding(1);
+            this.TransferBtn.Name = "TransferBtn";
+            this.TransferBtn.Size = new System.Drawing.Size(98, 26);
+            this.TransferBtn.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            this.TransferBtn.StateCommon.Back.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(50)))), ((int)(((byte)(50)))));
+            this.TransferBtn.StateCommon.Content.ShortText.Color1 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.TransferBtn.StateCommon.Content.ShortText.Color2 = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.TransferBtn.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.TransferBtn.TabIndex = 23;
+            this.TransferBtn.Values.Text = "Chuyển tiền";
+            this.TransferBtn.Click += new System.EventHandler(this.TransferBtn_Click);
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(1003, 621);
+            this.ClientSize = new System.Drawing.Size(1132, 621);
             this.Controls.Add(this.kryptonPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(985, 660);
@@ -550,7 +584,6 @@
         private Krypton.Toolkit.KryptonDataGridView GSMGridView;
         private Krypton.Toolkit.KryptonLabel kryptonLabel1;
         private Krypton.Toolkit.KryptonNumericUpDown ThreadInput;
-        private Krypton.Toolkit.KryptonLabel KeyCount;
         private Krypton.Toolkit.KryptonPanel kryptonPanel1;
         private Krypton.Toolkit.KryptonLabel kryptonLabel2;
         private Krypton.Toolkit.KryptonLabel kryptonLabel3;
@@ -566,5 +599,8 @@
         private Krypton.Toolkit.KryptonDataGridViewTextBoxColumn AccountOwner;
         private Krypton.Toolkit.KryptonDataGridViewTextBoxColumn AccountBalance;
         private Krypton.Toolkit.KryptonDataGridViewTextBoxColumn PortStatus;
+        private Krypton.Toolkit.KryptonLabel kryptonLabel4;
+        private Krypton.Toolkit.KryptonTextBox PasswordTextBox;
+        private Krypton.Toolkit.KryptonButton TransferBtn;
     }
 }

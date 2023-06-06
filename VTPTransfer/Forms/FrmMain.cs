@@ -2,6 +2,9 @@
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using VTPLibrary;
+using VTPTransfer.Services;
 
 namespace VTPTransfer.Forms
 {
@@ -10,6 +13,7 @@ namespace VTPTransfer.Forms
         private readonly BindingList<GSMCom> GSMComs;
         private readonly object lockRun = new();
         private CancellationTokenSource CancellationTokenSource;
+        private List<MyProxy> Proxies = new();
 
         public readonly object LockCount = new();
         public int totalCanel = 0;
@@ -20,7 +24,7 @@ namespace VTPTransfer.Forms
         public FrmMain()
         {
             InitializeComponent();
-            UseImmersiveDarkMode(this.Handle, true);
+            UseImmersiveDarkMode(Handle, true);
 
             GSMComs = new();
 
@@ -60,6 +64,15 @@ namespace VTPTransfer.Forms
                 Multiselect = false
             };
             if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            await Task.Run(() =>
+            {
+                Proxies = DataHandler.ReadProxies(openFileDialog.FileName);
+                Invoke(() =>
+                {
+                    ProxyCountTextBox.Text = Proxies.Count.ToString();
+                    MessageBox.Show(this, $"Đã load xong {Proxies.Count} proxies", "Thông báo");
+                });
+            });
         }
 
         private void DisableBtn(bool disable)
@@ -72,6 +85,7 @@ namespace VTPTransfer.Forms
                 ResetBtn.Enabled = !disable;
                 ConnectBtn.Enabled = !disable;
                 DisconnectBtn.Enabled = !disable;
+                TransferBtn.Enabled = !disable;
 
                 ThreadInput.Enabled = !disable;
                 AmountInput.Enabled = !disable;
@@ -79,6 +93,7 @@ namespace VTPTransfer.Forms
                 MaxNotEnoughCheckBox.Enabled = !disable;
 
                 ReceiverTextBox.ReadOnly = disable;
+                PasswordTextBox.ReadOnly = disable;
             });
         }
 
@@ -90,24 +105,40 @@ namespace VTPTransfer.Forms
                 try
                 {
                     DisableBtn(true);
-                    Invoke(() => MessageBox.Show(this, "Chương trình đã bắt đầu", "Thông báo"));
-                    var tasks = new List<Task>();
 
+                    var totalThread = (int)ThreadInput.Value;
+                    var tasks = new List<Task>();
                     CancellationTokenSource = new();
+
+                    var index = 0;
+                    while (index < GSMComs.Count)
+                    {
+                        if (CancellationTokenSource.IsCancellationRequested) return;
+                        var token = CancellationTokenSource.Token;
+
+                        var com = GSMComs[index];
+                        VTPClient client;
+                        if (Proxies.Count == 0) client = new VTPClient(com.Key);
+                        else
+                        {
+                            var proxyIndex = index % Proxies.Count;
+                            var proxy = Proxies[proxyIndex];
+                            client = new VTPClient(com.Key, proxy);
+                        }
+                        tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
+
+                        if (tasks.Count == totalThread) await Task.WhenAny(tasks);
+                        tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                    }
                     await Task.WhenAll(tasks);
                 }
                 catch (Exception ex)
                 {
-                    //DataHandler.WriteLog("[StartBtn_MouseUp]", ex);
+                    DataHandler.WriteLog("[StartBtn_MouseUp]", ex);
                 }
                 finally
                 {
                     DisableBtn(false);
-                    foreach (var com in GSMComs)
-                    {
-                        com.PortStatus = $"{com.PortStatus} -> Đã dừng";
-                    }
-                    Invoke(() => MessageBox.Show(this, "Chương trình đã hoàn thành", "Thông báo"));
                 }
             });
         }
@@ -202,5 +233,51 @@ namespace VTPTransfer.Forms
             return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
         }
         #endregion
+
+        private async void TransferBtn_Click(object sender, EventArgs e)
+        {
+            ActiveControl = kryptonLabel1;
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    DisableBtn(true);
+
+                    var totalThread = (int)ThreadInput.Value;
+                    var tasks = new List<Task>();
+                    CancellationTokenSource = new();
+
+                    var index = 0;
+                    while (index < GSMComs.Count)
+                    {
+                        if (CancellationTokenSource.IsCancellationRequested) return;
+                        var token = CancellationTokenSource.Token;
+
+                        var com = GSMComs[index];
+                        VTPClient client;
+                        if (Proxies.Count == 0) client = new VTPClient(com.Key);
+                        else
+                        {
+                            var proxyIndex = index % Proxies.Count;
+                            var proxy = Proxies[proxyIndex];
+                            client = new VTPClient(com.Key, proxy);
+                        }
+                        tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
+
+                        if (tasks.Count == totalThread) await Task.WhenAny(tasks);
+                        tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                    }
+                    await Task.WhenAll(tasks);
+                }
+                catch (Exception ex)
+                {
+                    DataHandler.WriteLog("[TransferBtn_Click]", ex);
+                }
+                finally
+                {
+                    DisableBtn(false);
+                }
+            });
+        }
     }
 }

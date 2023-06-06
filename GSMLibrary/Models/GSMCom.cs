@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Text;
+using VTPLibrary;
 
 namespace GSMLibrary.Models
 {
@@ -18,6 +19,14 @@ namespace GSMLibrary.Models
         private int _accountBalance = 0;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public VTPClient Client { get; set; } = null!;
+
+        public string LastOtp { get; set; } = null!;
+
+        public string AccessToken { get; set; } = null!;
+
+        public string Key { get; private set; }
 
         public ModemType ModemType { get; set; }
 
@@ -36,7 +45,7 @@ namespace GSMLibrary.Models
         public int AccountBalance
         {
             get => _accountBalance;
-            private set
+            set
             {
                 _accountBalance = value;
                 NotifyPropertyChanged(nameof(AccountBalance));
@@ -46,7 +55,7 @@ namespace GSMLibrary.Models
         public string AccountOwner
         {
             get => _accountOwner;
-            private set
+            set
             {
                 _accountOwner = value;
                 NotifyPropertyChanged(nameof(AccountOwner));
@@ -56,7 +65,7 @@ namespace GSMLibrary.Models
         public string AccountNumber
         {
             get => _accountNum;
-            private set
+            set
             {
                 _accountNum = value;
                 NotifyPropertyChanged(nameof(AccountNumber));
@@ -111,6 +120,7 @@ namespace GSMLibrary.Models
 
         public GSMCom(string portName, string index)
         {
+            Key = Guid.NewGuid().ToString().Replace("-", "")[8..].ToLower();
             Name = $"SIM {index}";
             Port = new SerialPort()
             {
