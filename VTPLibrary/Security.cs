@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -15,8 +16,11 @@ namespace VTPLibrary
             "KUQdz550fYcET3qUXtzoYnkB7XXmG2za79+gOfTdCUIJXCqsgyRvIfINeHpfcfxU" +
             "hQIDAQAB";
 
+        private static readonly string _iv = "MTIzNDU2";
+
         public static string CreateKey(string key, string msisdn, string threadId)
         {
+            msisdn = msisdn.Length == 10 && msisdn.StartsWith("0") ? "84" + msisdn[1..] : msisdn;
             var keyBytes = Convert.FromBase64String(_publicKey);
             var message = JsonConvert.SerializeObject(new { key, msisdn, threadId });
             var messageBytes = Encoding.UTF8.GetBytes(message);
@@ -27,18 +31,18 @@ namespace VTPLibrary
             return Convert.ToBase64String(encryptedBytes);
         }
 
-        public static string TripleDesEncrypt(string message, string key, string iv)
+        public static string TripleDesEncrypt(string message, string key)
         {
-            var des = CreateDes(key, iv);
+            var des = CreateDes(key);
             var ct = des.CreateEncryptor();
             var input = Encoding.UTF8.GetBytes(message);
             var output = ct.TransformFinalBlock(input, 0, input.Length);
             return Convert.ToBase64String(output);
         }
 
-        public static string TripleDesDecrypt(string data, string key, string iv)
+        public static string TripleDesDecrypt(string data, string key)
         {
-            var des = CreateDes(key, iv);
+            var des = CreateDes(key);
             var ct = des.CreateDecryptor();
             var input = Convert.FromBase64String(data);
             var output = ct.TransformFinalBlock(input, 0, input.Length);
@@ -46,12 +50,12 @@ namespace VTPLibrary
         }
 
 
-        private static TripleDES CreateDes(string key, string iv)
+        private static TripleDES CreateDes(string key)
         {
-            using var md5 = MD5.Create();
-            using var des = TripleDES.Create();
-            des.Key = Encoding.UTF8.GetBytes(key);
-            des.IV = Encoding.UTF8.GetBytes(iv);
+            var des = TripleDES.Create();
+            var keyBytes = Encoding.UTF8.GetBytes(key);
+            des.Key = keyBytes;
+            des.IV = Encoding.UTF8.GetBytes(_iv);
             des.Padding = PaddingMode.PKCS7;
             des.Mode = CipherMode.CBC;
             return des;
