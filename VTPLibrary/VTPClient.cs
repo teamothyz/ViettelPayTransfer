@@ -7,12 +7,14 @@ namespace VTPLibrary
 {
     public class VTPClient
     {
-        public readonly HttpClient _client;
-        public readonly string Key;
+        private readonly HttpClient _client;
         private readonly string _threadId;
+        private readonly string _key;
 
-        public VTPClient(MyProxy? proxy = null)
+        public VTPClient(string key, MyProxy? proxy = null)
         {
+            _key = key;
+            _threadId = Guid.NewGuid().ToString().Replace("-", "").ToLower();
             var handler = new HttpClientHandler
             {
                 UseCookies = true
@@ -36,32 +38,40 @@ namespace VTPLibrary
             _client.DefaultRequestHeaders.Add("Sec-Ch-Ua", @"""Not.A/Brand"";v=""8"", ""Chromium"";v=""114"", ""Microsoft Edge"";v=""114""");
             _client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Mobile", "?1");
             _client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", @"""Android""");
-
-            Key = Guid.NewGuid().ToString().Replace("-", "").ToLower()[8..];
-            _threadId = Guid.NewGuid().ToString().Replace("-", "").ToLower();
         }
 
-        public async Task<bool> SyncKey(string phone, CancellationToken token)
+        public async Task SyncKey(string phone, CancellationToken token)
         {
-            var hash = Security.CreateKey(Key, phone, _threadId);
+            var hash = Security.CreateKey(_key, phone, _threadId);
             var body = JsonConvert.SerializeObject(new { hash });
             var res = await _client.PostAsync("https://m.vtmoney.vn/webvtp-service/public/v1/syncKey",
                 new StringContent(body, Encoding.UTF8, "application/json"), token);
             var content = await res.Content.ReadAsStringAsync(token);
             var resModel = JsonConvert.DeserializeObject<ResponseModel>(content);
             _client.DefaultRequestHeaders.Add("Thread-Id", _threadId);
-            return resModel?.Status.Code == "00";
+            if (resModel?.Status.Code != "00") throw new Exception(content);
         }
 
         public async Task<ResponseModel?> GetByCmd<TRequest>(string cmd, TRequest requestEntity, CancellationToken token)
         {
-            var requestModel = new RequestModel<TRequest>(cmd, requestEntity, Key);
+            var requestModel = new RequestModel<TRequest>(cmd, requestEntity, _key);
             var body = JsonConvert.SerializeObject(requestModel);
             var res = await _client.PostAsync("https://m.vtmoney.vn/webvtp-service/public/v1/api",
                 new StringContent(body, Encoding.UTF8, "application/json"), token);
             var content = await res.Content.ReadAsStringAsync(token);
             var resModel = JsonConvert.DeserializeObject<ResponseModel>(content);
+            if (resModel?.Status.Code != "00")
+            {
+                if (resModel?.Data != null) throw new Exception(resModel.GetData(_key));
+                else throw new Exception(content);
+            }
             return resModel;
+        }
+
+        public void SetSessionId(string sessionId)
+        {
+            _client.DefaultRequestHeaders.Remove("Session-Id");
+            _client.DefaultRequestHeaders.Add("Session-Id", sessionId);
         }
     }
 }
