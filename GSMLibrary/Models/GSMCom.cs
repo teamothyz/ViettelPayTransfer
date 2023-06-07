@@ -21,12 +21,11 @@ namespace GSMLibrary.Models
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public VTPClient Client { get; set; } = null!;
-
         public string LastOtp { get; set; } = null!;
-
         public string AccessToken { get; set; } = null!;
-
-        public string Key { get; private set; }
+        public string Key { get; set; } = null!;
+        public string ThreadId { get; set; } = null!;
+        public string SessionId { get; set; } = null!;
 
         public ModemType ModemType { get; set; }
 
@@ -120,7 +119,6 @@ namespace GSMLibrary.Models
 
         public GSMCom(string portName, string index)
         {
-            Key = Guid.NewGuid().ToString().Replace("-", "")[8..].ToLower();
             Name = $"SIM {index}";
             Port = new SerialPort()
             {

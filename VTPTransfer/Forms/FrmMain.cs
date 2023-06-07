@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using VTPLibrary;
 using VTPTransfer.Services;
 
@@ -11,15 +10,10 @@ namespace VTPTransfer.Forms
     public partial class FrmMain : Form
     {
         private readonly BindingList<GSMCom> GSMComs;
-        private readonly object lockRun = new();
         private CancellationTokenSource CancellationTokenSource;
         private List<MyProxy> Proxies = new();
 
-        public readonly object LockCount = new();
-        public int totalCanel = 0;
-        public int successCancel = 0;
-        public int failedCancel = 0;
-        public int skipCancel = 0;
+        private TransferOption Option;
 
         public FrmMain()
         {
@@ -111,24 +105,45 @@ namespace VTPTransfer.Forms
                     CancellationTokenSource = new();
 
                     var index = 0;
-                    while (index < GSMComs.Count)
+                    var selectedRows = GetSelectedRows();
+                    while (index < selectedRows.Count)
                     {
-                        if (CancellationTokenSource.IsCancellationRequested) return;
-                        var token = CancellationTokenSource.Token;
-
-                        var com = GSMComs[index];
-                        VTPClient client;
-                        if (Proxies.Count == 0) client = new VTPClient(com.Key);
-                        else
+                        try
                         {
-                            var proxyIndex = index % Proxies.Count;
-                            var proxy = Proxies[proxyIndex];
-                            client = new VTPClient(com.Key, proxy);
-                        }
-                        tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
+                            if (CancellationTokenSource.IsCancellationRequested) return;
+                            var token = CancellationTokenSource.Token;
 
-                        if (tasks.Count == totalThread) await Task.WhenAny(tasks);
-                        tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                            var com = (GSMCom)selectedRows[index].DataBoundItem;
+                            if (!com.Port.IsOpen)
+                            {
+                                com.PortStatus = "Không hỗ trợ: Chưa kết nối";
+                                continue;
+                            }
+                            if (string.IsNullOrEmpty(com.PhoneNumber))
+                            {
+                                com.PortStatus = "Không hỗ trợ: Không đọc được SĐT";
+                                continue;
+                            }
+                            VTPClient client;
+                            com.ThreadId = Guid.NewGuid().ToString().Replace("-", "").ToLower();
+                            com.Key = Guid.NewGuid().ToString().Replace("-", "")[8..].ToLower();
+                            if (Proxies.Count == 0) client = new VTPClient(com.Key, com.ThreadId);
+                            else
+                            {
+                                var proxyIndex = index % Proxies.Count;
+                                var proxy = Proxies[proxyIndex];
+                                //var proxy = Proxies[new Random().Next(0, Proxies.Count - 1)];
+                                client = new VTPClient(com.Key, com.ThreadId, proxy);
+                            }
+                            tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
+
+                            if (tasks.Count == totalThread) await Task.WhenAny(tasks);
+                            tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                        }
+                        finally
+                        {
+                            index++;
+                        }
                     }
                     await Task.WhenAll(tasks);
                 }
@@ -139,6 +154,7 @@ namespace VTPTransfer.Forms
                 finally
                 {
                     DisableBtn(false);
+                    Invoke(() => MessageBox.Show(this, "Đã đăng nhập xong", "Thông báo"));
                 }
             });
         }
@@ -155,7 +171,7 @@ namespace VTPTransfer.Forms
         {
             ActiveControl = kryptonLabel1;
             var tasks = new List<Task>();
-            var selectedRows = GetCheckedRows();
+            var selectedRows = GetSelectedRows();
             foreach (var row in selectedRows)
             {
                 var gsm = (GSMCom)row.DataBoundItem;
@@ -169,7 +185,7 @@ namespace VTPTransfer.Forms
         {
             ActiveControl = kryptonLabel1;
             var tasks = new List<Task>();
-            var selectedRows = GetCheckedRows();
+            var selectedRows = GetSelectedRows();
             foreach (var row in selectedRows)
             {
                 var gsm = (GSMCom)row.DataBoundItem;
@@ -183,7 +199,7 @@ namespace VTPTransfer.Forms
         {
             ActiveControl = kryptonLabel1;
             var tasks = new List<Task>();
-            var selectedRows = GetCheckedRows();
+            var selectedRows = GetSelectedRows();
             foreach (var row in selectedRows)
             {
                 var gsm = (GSMCom)row.DataBoundItem;
@@ -193,7 +209,7 @@ namespace VTPTransfer.Forms
             Invoke(() => MessageBox.Show(this, "Đã ngắt kết nối xong", "Thông báo"));
         }
 
-        private List<DataGridViewRow> GetCheckedRows()
+        private List<DataGridViewRow> GetSelectedRows()
         {
             var selectedRows = new List<DataGridViewRow>();
             foreach (DataGridViewCell cell in GSMGridView.SelectedCells)
@@ -248,24 +264,48 @@ namespace VTPTransfer.Forms
                     CancellationTokenSource = new();
 
                     var index = 0;
-                    while (index < GSMComs.Count)
+                    var selectedRows = GetSelectedRows();
+                    while (index < selectedRows.Count)
                     {
-                        if (CancellationTokenSource.IsCancellationRequested) return;
-                        var token = CancellationTokenSource.Token;
-
-                        var com = GSMComs[index];
-                        VTPClient client;
-                        if (Proxies.Count == 0) client = new VTPClient(com.Key);
-                        else
+                        try
                         {
-                            var proxyIndex = index % Proxies.Count;
-                            var proxy = Proxies[proxyIndex];
-                            client = new VTPClient(com.Key, proxy);
-                        }
-                        tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
+                            if (CancellationTokenSource.IsCancellationRequested) return;
+                            var token = CancellationTokenSource.Token;
 
-                        if (tasks.Count == totalThread) await Task.WhenAny(tasks);
-                        tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                            var com = (GSMCom)selectedRows[index].DataBoundItem;
+                            if (!com.Port.IsOpen)
+                            {
+                                com.PortStatus = "Không hỗ trợ: Chưa kết nối";
+                                continue;
+                            }
+                            if (string.IsNullOrEmpty(com.PhoneNumber))
+                            {
+                                com.PortStatus = "Không hỗ trợ: Không đọc được SĐT";
+                                continue;
+                            }
+                            if (string.IsNullOrEmpty(com.AccessToken) || string.IsNullOrEmpty(com.SessionId))
+                            {
+                                com.PortStatus = "Không hỗ trợ: Vui lòng đăng nhập lại";
+                                continue;
+                            }
+                            VTPClient client;
+                            if (Proxies.Count == 0) client = new VTPClient(com.Key, com.ThreadId);
+                            else
+                            {
+                                var proxyIndex = index % Proxies.Count;
+                                var proxy = Proxies[proxyIndex];
+                                //var proxy = Proxies[new Random().Next(0, Proxies.Count - 1)];
+                                client = new VTPClient(com.Key, com.ThreadId, proxy);
+                            }
+                            tasks.Add(VTPService.SendMoney(client, com, PasswordTextBox.Text, ReceiverTextBox.Text.Trim(), (int)AmountInput.Value, Option, token));
+
+                            if (tasks.Count == totalThread) await Task.WhenAny(tasks);
+                            tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                        }
+                        finally
+                        {
+                            index++;
+                        }
                     }
                     await Task.WhenAll(tasks);
                 }
@@ -276,8 +316,19 @@ namespace VTPTransfer.Forms
                 finally
                 {
                     DisableBtn(false);
+                    Invoke(() => MessageBox.Show(this, "Đã chuyển tiền xong", "Thông báo"));
                 }
             });
+        }
+
+        private void TransferOption_CheckedChanged(object sender, EventArgs e)
+        {
+            if (MaxCheckBox.Checked) Option = TransferOption.Maximum;
+            else
+            {
+                if (MaxNotEnoughCheckBox.Checked) Option = TransferOption.MaxIfNotEnough;
+                else Option = TransferOption.Normal;
+            }
         }
     }
 }

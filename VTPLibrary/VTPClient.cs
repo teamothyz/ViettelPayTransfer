@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using System.Threading;
 using VTPLibrary.Models;
 
 namespace VTPLibrary
@@ -11,10 +12,10 @@ namespace VTPLibrary
         private readonly string _threadId;
         private readonly string _key;
 
-        public VTPClient(string key, MyProxy? proxy = null)
+        public VTPClient(string key, string threadId, MyProxy? proxy = null)
         {
             _key = key;
-            _threadId = Guid.NewGuid().ToString().Replace("-", "").ToLower();
+            _threadId = threadId;
             var handler = new HttpClientHandler
             {
                 UseCookies = true
@@ -48,8 +49,8 @@ namespace VTPLibrary
                 new StringContent(body, Encoding.UTF8, "application/json"), token);
             var content = await res.Content.ReadAsStringAsync(token);
             var resModel = JsonConvert.DeserializeObject<ResponseModel>(content);
-            _client.DefaultRequestHeaders.Add("Thread-Id", _threadId);
             if (resModel?.Status.Code != "00") throw new Exception(content);
+            SetThreadId(_threadId);
         }
 
         public async Task<ResponseModel?> GetByCmd<TRequest>(string cmd, TRequest requestEntity, CancellationToken token)
@@ -66,6 +67,12 @@ namespace VTPLibrary
                 else throw new Exception(content);
             }
             return resModel;
+        }
+
+        public void SetThreadId(string threadId)
+        {
+            _client.DefaultRequestHeaders.Remove("Thread-Id");
+            _client.DefaultRequestHeaders.Add("Thread-Id", threadId);
         }
 
         public void SetSessionId(string sessionId)

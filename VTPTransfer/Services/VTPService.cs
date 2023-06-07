@@ -62,6 +62,7 @@ namespace VTPTransfer.Services
 
                 com.AccountNumber = getAccResInfo.Sources.VTPCards[0].CardNumber;
                 com.AccountOwner = getAccResInfo.Sources.VTPCards[0].CardName;
+                com.SessionId = getAccResInfo.OtherData.SessionId;
                 client.SetSessionId(getAccResInfo.OtherData.SessionId);
 
                 com.PortStatus = $"{com.PortStatus} -> Kiểm tra số dư";
@@ -75,11 +76,30 @@ namespace VTPTransfer.Services
             }
         }
 
-        public static async Task SendMoney(VTPClient client, GSMCom com, string password, string receiver, int amount, CancellationToken token)
+        public static async Task SendMoney(VTPClient client, GSMCom com, string password, string receiver, int amount, TransferOption option, CancellationToken token)
         {
             try
             {
+                switch (option) 
+                {
+                    case TransferOption.Maximum:
+                        amount = com.AccountBalance;
+                        break;
+                    case TransferOption.MaxIfNotEnough:
+                        amount = com.AccountBalance > amount ? amount : com.AccountBalance; 
+                        break;
+                    case TransferOption.Normal:
+                    default: break;
+                }
+                if (amount < 1000)
+                {
+                    com.PortStatus = "Không thể chuyển do số tiền dưới 1000VND";
+                    return;
+                }
+
                 com.PortStatus = "Bắt đầu chuyển tiền";
+                client.SetSessionId(com.SessionId);
+                client.SetThreadId(com.ThreadId);
                 GSMService.ClearSMS(com);
 
                 com.PortStatus = "Đang yêu cầu OTP chuyển tiền";

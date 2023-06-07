@@ -3,7 +3,7 @@ using VTPLibrary.Models.Request;
 using VTPLibrary.Models.Response;
 
 var key = Guid.NewGuid().ToString().Replace("-", "")[8..].ToLower();
-var client = new VTPClient(key);
+var client = new VTPClient(Guid.NewGuid().ToString().Replace("-", "").ToLower(), key);
 var token = CancellationToken.None;
 var phone = "0357090609";
 
