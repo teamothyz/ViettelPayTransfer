@@ -67,26 +67,6 @@ namespace GSMLibrary.Services
             }
             com.PhoneNumber = phoneNumber;
             com.Balance = string.Empty;
-
-            //Match balanceMatch;
-            //var balance = string.Empty;
-            //switch (com.SIMType)
-            //{
-            //    case SIMType.Viettel:
-            //        balanceMatch = Regex.Match(simInfo, "TKG:.*\\d{1,}d,");
-            //        if (balanceMatch.Success)
-            //            balance = balanceMatch.Value.Replace("TKG:", "")
-            //                .Replace("d,", "d").Trim();
-            //        break;
-            //    case SIMType.Vinaphone:
-            //        balanceMatch = Regex.Match(simInfo, "TK chinh=.*\\d{1,} VND,");
-            //        if (balanceMatch.Success)
-            //            balance = balanceMatch.Value.Replace("TK chinh=", "")
-            //                .Replace(" VND,", "d").Trim();
-            //        break;
-            //    default: break;
-            //}
-            //com.Balance = balance;
         }
 
         private static string GetSIMInfoUSSD(SerialPort port, SIMType simType, ModemType modemType)
@@ -101,12 +81,12 @@ namespace GSMLibrary.Services
             return response;
         }
 
-        public static string GetOTP(GSMCom com, CancellationToken token)
+        public static string GetOTP(GSMCom com, bool setLastOtp, CancellationToken token)
         {
             try
             {
                 string otp;
-                var endTime = DateTime.Now.AddSeconds(2);
+                var endTime = DateTime.Now.AddSeconds(30);
                 do
                 {
                     token.ThrowIfCancellationRequested();
@@ -115,14 +95,14 @@ namespace GSMLibrary.Services
                     if (string.IsNullOrEmpty(otp)) Thread.Sleep(1000);
                 } while (string.IsNullOrEmpty(otp) && endTime > DateTime.Now);
                 if (string.IsNullOrEmpty(otp)) throw new Exception();
-                com.LastOtp = otp;
+                if (setLastOtp) com.LastOtp = otp;
                 return otp;
             }
-            catch 
+            catch
             {
                 if (token.IsCancellationRequested) throw new Exception("Người dùng yêu cầu dừng chương trình");
-                if (com.LastOtp != null) return com.LastOtp;
-                throw new Exception("Không tìm thấy OTP"); 
+                if (com.LastOtp != null && setLastOtp) return com.LastOtp;
+                throw new Exception("Không tìm thấy OTP");
             }
         }
 
@@ -132,23 +112,8 @@ namespace GSMLibrary.Services
             GetResponse(com.Port, "AT+CMGD=1,4");
             var messages = response.Split("\r\n+CMGL:");
 
-            var sender = "(\\s\\d{4}\\s)";
-            var regex = "VTMONEY";
-            //switch (com.SIMType)
-            //{
-            //    case SIMType.Vinaphone:
-            //        regex = "(\\d{6}\\s)";
-            //        sender = "MyVNPT";
-            //        break;
-            //    case SIMType.Viettel:
-            //        regex = "(\\s\\d{4}\\s)";
-            //        sender = "VTMONEY";
-            //        break;
-            //    default:
-            //        regex = "UNSUPPORTED";
-            //        sender = "UNSUPPORTED";
-            //        break;
-            //}
+            var sender = "VTMONEY";
+            var regex = "(\\s\\d{4}\\s)";
 
             var otp = string.Empty;
             foreach (var message in messages)

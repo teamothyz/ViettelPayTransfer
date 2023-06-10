@@ -12,11 +12,12 @@ namespace VTPLibrary.Models
 
         public string GetData(string key)
         {
-            return Security.TripleDesDecrypt(Data, key);
+            return Data == null ? string.Empty : Security.TripleDesDecrypt(Data, key);
         }
 
         public T? GetData<T>(string key)
         {
+            if (Data == null) return default;
             var content = Security.TripleDesDecrypt(Data, key);
             return JsonConvert.DeserializeObject<T>(content);
         }

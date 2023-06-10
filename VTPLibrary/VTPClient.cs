@@ -31,10 +31,10 @@ namespace VTPLibrary
             }
             _client = new HttpClient(handler)
             {
-                DefaultRequestVersion = HttpVersion.Version11
+                DefaultRequestVersion = HttpVersion.Version11,
+                Timeout = TimeSpan.FromSeconds(180),
             };
             _client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36 Edg/114.0.1823.37");
-            _client.DefaultRequestHeaders.Add("Referer", "https://m.vtmoney.vn/account/login");
             _client.DefaultRequestHeaders.Add("Origin", "https://m.vtmoney.vn");
             _client.DefaultRequestHeaders.Add("Sec-Ch-Ua", @"""Not.A/Brand"";v=""8"", ""Chromium"";v=""114"", ""Microsoft Edge"";v=""114""");
             _client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Mobile", "?1");
@@ -55,18 +55,50 @@ namespace VTPLibrary
 
         public async Task<ResponseModel?> GetByCmd<TRequest>(string cmd, TRequest requestEntity, CancellationToken token)
         {
-            var requestModel = new RequestModel<TRequest>(cmd, requestEntity, _key);
-            var body = JsonConvert.SerializeObject(requestModel);
-            var res = await _client.PostAsync("https://m.vtmoney.vn/webvtp-service/public/v1/api",
-                new StringContent(body, Encoding.UTF8, "application/json"), token);
-            var content = await res.Content.ReadAsStringAsync(token);
-            var resModel = JsonConvert.DeserializeObject<ResponseModel>(content);
-            if (resModel?.Status.Code != "00")
+            var tryTimes = 1;
+            HttpResponseMessage res = null!;
+            ResponseModel? resModel = null!;
+            while (tryTimes <= 5)
             {
-                if (resModel?.Data != null) throw new Exception(resModel.GetData(_key));
-                else throw new Exception(content);
+                try
+                {
+                    var requestModel = new RequestModel<TRequest>(cmd, requestEntity, _key);
+                    var body = JsonConvert.SerializeObject(requestModel);
+                    res = await _client.PostAsync("https://m.vtmoney.vn/webvtp-service/public/v1/api",
+                        new StringContent(body, Encoding.UTF8, "application/json"), token);
+                    var content = await res.Content.ReadAsStringAsync(token);
+                    resModel = JsonConvert.DeserializeObject<ResponseModel>(content);
+                    if (resModel?.Status.Code != "00")
+                    {
+                        if (resModel?.Status.Code == "0" || resModel?.Status.Code == "09")
+                        {
+                            tryTimes++;
+                            await Task.Delay(1000, token);
+                            continue;
+                        }
+                        if (cmd == "MONEY_TRANSFER_INSIDE_SMS" && resModel?.Status.Code == "OTP") return resModel;
+                        if (cmd == "AUTH_LOGIN" && resModel?.Status.Code == "AUT0014") return resModel;
+                        if (resModel?.Data != null) throw new Exception($"{resModel.GetData(_key)}\n{JsonConvert.SerializeObject(resModel.Status)}");
+                        else throw new Exception(content);
+                    }
+                    return resModel;
+                }
+                catch
+                {
+                    if (tryTimes == 5) throw;
+                    tryTimes++;
+                    await Task.Delay(1000, token);
+                    continue;
+                }
             }
             return resModel;
+        }
+
+        public void SetReferer(bool isLogin)
+        {
+            _client.DefaultRequestHeaders.Remove("Referer");
+            if (isLogin) _client.DefaultRequestHeaders.Add("Referer", "https://m.vtmoney.vn/account/login");
+            else _client.DefaultRequestHeaders.Add("Referer", "https://m.vtmoney.vn/home");
         }
 
         public void SetThreadId(string threadId)

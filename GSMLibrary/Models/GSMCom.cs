@@ -152,7 +152,7 @@ namespace GSMLibrary.Models
                 PortStatus = "Xác định SIM";
                 GSMService.GetSIMType(this);
 
-                if (SIMType != SIMType.Viettel)
+                if (SIMType == SIMType.None || SIMType == SIMType.Unsupported)
                 {
                     Disconnect();
                     PortStatus = $"{PortStatus} -> SIM không được hỗ trợ";

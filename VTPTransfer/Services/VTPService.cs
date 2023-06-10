@@ -14,13 +14,13 @@ namespace VTPTransfer.Services
             {
                 com.PortStatus = "Bắt đầu lấy thông tin";
                 await client.SyncKey(com.PhoneNumber, token);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
                 com.PortStatus = "Kiểm tra số điện thoại hợp lệ";
                 var validate = new ValidateAccountRequestModel(com.PhoneNumber);
                 var validateRes = await client.GetByCmd(ValidateAccountRequestModel.Cmd, validate, token);
                 if (validateRes == null) throw new Exception(ValidateAccountRequestModel.Cmd);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
                 GSMService.ClearSMS(com);
 
@@ -29,13 +29,13 @@ namespace VTPTransfer.Services
                 var loginRes = await client.GetByCmd(AuthLoginRequestModel.Cmd, login, token);
                 if (loginRes == null) throw new Exception(ValidateAccountRequestModel.Cmd);
                 var loginResInfo = loginRes.GetData<AuthLoginResponseModel>(com.Key);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
                 AuthLoginOTPResponseModel? loginInfo;
                 if (loginResInfo?.RequestId != null)
                 {
                     com.PortStatus = $"{com.PortStatus} -> Đang đọc OTP";
-                    var otp = GSMService.GetOTP(com, token);
+                    var otp = GSMService.GetOTP(com, true, token);
 
                     com.PortStatus = $"{com.PortStatus} -> Đăng nhập";
                     var loginOtp = new AuthLoginOTPRequestModel(com.PhoneNumber, password, otp, loginResInfo.RequestId);
@@ -43,7 +43,7 @@ namespace VTPTransfer.Services
                     if (loginOtpRes == null) throw new Exception(AuthLoginRequestModel.Cmd);
                     loginInfo = loginOtpRes.GetData<AuthLoginOTPResponseModel>(com.Key);
                     if (loginInfo?.AccessToken == null) throw new Exception(loginOtpRes.Status.Message);
-                    await Task.Delay(500, token);
+                    await Task.Delay(1000, token);
                 }
                 else
                 {
@@ -58,7 +58,7 @@ namespace VTPTransfer.Services
                 if (getAccRes == null) throw new Exception(GetAccountRequestModel.Cmd);
                 var getAccResInfo = getAccRes.GetData<GetAccountResponseModel>(com.Key);
                 if (getAccResInfo?.OtherData?.SessionId == null) throw new Exception(getAccRes.Status.Message);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
                 com.AccountNumber = getAccResInfo.Sources.VTPCards[0].CardNumber;
                 com.AccountOwner = getAccResInfo.Sources.VTPCards[0].CardName;
@@ -67,6 +67,8 @@ namespace VTPTransfer.Services
 
                 com.PortStatus = $"{com.PortStatus} -> Kiểm tra số dư";
                 await ReloadBalance(client, com, token);
+
+                com.PortStatus = $"{com.PortStatus} -> Hoàn thành";
             }
             catch (Exception ex)
             {
@@ -80,13 +82,13 @@ namespace VTPTransfer.Services
         {
             try
             {
-                switch (option) 
+                switch (option)
                 {
                     case TransferOption.Maximum:
                         amount = com.AccountBalance;
                         break;
                     case TransferOption.MaxIfNotEnough:
-                        amount = com.AccountBalance > amount ? amount : com.AccountBalance; 
+                        amount = com.AccountBalance > amount ? amount : com.AccountBalance;
                         break;
                     case TransferOption.Normal:
                     default: break;
@@ -109,21 +111,21 @@ namespace VTPTransfer.Services
                 var transferResInfo = transferRes.GetData<TransferResponseModel>(com.Key);
                 if (transferResInfo?.OrderId == null) throw new Exception(transferRes.Status.Message);
                 client.SetSessionId(transferResInfo.SessionId);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
                 com.PortStatus = $"{com.PortStatus} -> Đang đọc OTP";
-                var otp = GSMService.GetOTP(com, token);
+                var otp = GSMService.GetOTP(com, false, token);
 
                 com.PortStatus = $"{com.PortStatus} -> Chuyển tiền";
                 var transferOtp = new TransferOTPRequestModel(password, receiver, amount, transferResInfo.OrderId, otp);
-                var transferOtpRes = await client.GetByCmd(TransferRequestModel.Cmd, transferOtp, token);
-                if (transferOtpRes == null) throw new Exception(TransferRequestModel.Cmd);
+                var transferOtpRes = await client.GetByCmd(TransferOTPRequestModel.Cmd, transferOtp, token);
+                if (transferOtpRes == null) throw new Exception(TransferOTPRequestModel.Cmd);
                 var transferOtpResInfo = transferOtpRes.GetData<TransferOTPResponseModel>(com.Key);
                 if (transferOtpResInfo?.TransactionId == null) throw new Exception(transferOtpRes.Status.Message);
-                await Task.Delay(500, token);
+                await Task.Delay(1000, token);
 
-                com.PortStatus = $"{com.PortStatus} -> Kiểm tra số dư";
-                await ReloadBalance(client, com, token);
+                com.AccountBalance -= amount;
+                com.PortStatus = $"{com.PortStatus} -> Thành công";
             }
             catch (Exception ex)
             {

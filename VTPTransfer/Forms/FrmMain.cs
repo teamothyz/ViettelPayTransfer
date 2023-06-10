@@ -13,7 +13,7 @@ namespace VTPTransfer.Forms
         private CancellationTokenSource CancellationTokenSource;
         private List<MyProxy> Proxies = new();
 
-        private TransferOption Option;
+        private TransferOption Option = TransferOption.Maximum;
 
         public FrmMain()
         {
@@ -132,13 +132,16 @@ namespace VTPTransfer.Forms
                             {
                                 var proxyIndex = index % Proxies.Count;
                                 var proxy = Proxies[proxyIndex];
-                                //var proxy = Proxies[new Random().Next(0, Proxies.Count - 1)];
                                 client = new VTPClient(com.Key, com.ThreadId, proxy);
                             }
                             tasks.Add(VTPService.Login(client, com, PasswordTextBox.Text, token));
 
                             if (tasks.Count == totalThread) await Task.WhenAny(tasks);
                             tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                        }
+                        catch (Exception ex)
+                        {
+                            DataHandler.WriteLog("[StartBtn_MouseUp]", new Exception($"Got exception when login {ex.Message}"));
                         }
                         finally
                         {
@@ -294,11 +297,9 @@ namespace VTPTransfer.Forms
                             {
                                 var proxyIndex = index % Proxies.Count;
                                 var proxy = Proxies[proxyIndex];
-                                //var proxy = Proxies[new Random().Next(0, Proxies.Count - 1)];
                                 client = new VTPClient(com.Key, com.ThreadId, proxy);
                             }
                             tasks.Add(VTPService.SendMoney(client, com, PasswordTextBox.Text, ReceiverTextBox.Text.Trim(), (int)AmountInput.Value, Option, token));
-
                             if (tasks.Count == totalThread) await Task.WhenAny(tasks);
                             tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
                         }
