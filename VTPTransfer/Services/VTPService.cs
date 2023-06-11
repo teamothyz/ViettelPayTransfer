@@ -72,7 +72,11 @@ namespace VTPTransfer.Services
             }
             catch (Exception ex)
             {
-                if (token.IsCancellationRequested) return;
+                if (token.IsCancellationRequested)
+                {
+                    com.PortStatus = $"{com.PortStatus} -> Đã dừng";
+                    return;
+                }
                 else com.PortStatus = $"{com.PortStatus} -> Thất bại";
                 DataHandler.WriteLog("[Login]", ex);
             }
@@ -122,14 +126,18 @@ namespace VTPTransfer.Services
                 if (transferOtpRes == null) throw new Exception(TransferOTPRequestModel.Cmd);
                 var transferOtpResInfo = transferOtpRes.GetData<TransferOTPResponseModel>(com.Key);
                 if (transferOtpResInfo?.TransactionId == null) throw new Exception(transferOtpRes.Status.Message);
-                await Task.Delay(1000, token);
 
                 com.AccountBalance -= amount;
                 com.PortStatus = $"{com.PortStatus} -> Thành công";
+                await Task.Delay(1000, token);
             }
             catch (Exception ex)
             {
-                if (token.IsCancellationRequested) return;
+                if (token.IsCancellationRequested)
+                {
+                    com.PortStatus = $"{com.PortStatus} -> Đã dừng";
+                    return;
+                }
                 else com.PortStatus = $"{com.PortStatus} -> Thất bại";
                 DataHandler.WriteLog("[SendMoney]", ex);
             }

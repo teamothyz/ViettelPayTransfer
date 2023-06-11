@@ -288,7 +288,7 @@ namespace VTPTransfer.Forms
                             }
                             if (string.IsNullOrEmpty(com.AccessToken) || string.IsNullOrEmpty(com.SessionId))
                             {
-                                com.PortStatus = "Không hỗ trợ: Vui lòng đăng nhập lại";
+                                com.PortStatus = "Không hỗ trợ: Vui lòng đăng nhập trước/lại";
                                 continue;
                             }
                             VTPClient client;
@@ -302,6 +302,10 @@ namespace VTPTransfer.Forms
                             tasks.Add(VTPService.SendMoney(client, com, PasswordTextBox.Text, ReceiverTextBox.Text.Trim(), (int)AmountInput.Value, Option, token));
                             if (tasks.Count == totalThread) await Task.WhenAny(tasks);
                             tasks.ForEach(task => { if (task.IsCompleted) tasks.Remove(task); });
+                        }
+                        catch (Exception ex)
+                        {
+                            DataHandler.WriteLog("[TransferBtn_Click]", new Exception($"Got exception when sending money: {ex.Message}"));
                         }
                         finally
                         {
